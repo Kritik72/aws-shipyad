@@ -1,0 +1,59 @@
+<%- include('partials/header') %>
+
+<section class="page-head">
+  <div class="wrap head-row">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="lede">Live data from <code>/api/info</code>, <code>/api/environments</code>, and <code>/api/deployments</code>.</p>
+    </div>
+    <div class="head-actions">
+      <button class="btn btn-quiet" id="refresh" type="button">Refresh</button>
+      <p class="muted small" id="updated" aria-live="polite">Loading data</p>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <h2 class="h3">This instance</h2>
+    <dl class="facts facts-row" id="instance">
+      <div><dt>Pod</dt><dd>…</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <h2 class="h3">Environments</h2>
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th scope="col">Environment</th><th scope="col">Version</th><th scope="col">Status</th><th scope="col">Pods</th><th scope="col">Namespace</th><th scope="col">Last deploy</th></tr></thead>
+        <tbody id="env-rows"><tr><td colspan="6" class="muted">Loading environments</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="head-row">
+      <h2 class="h3">Recent deployments</h2>
+      <label class="filter">Show
+        <select id="env-filter">
+          <option value="">All environments</option>
+          <option value="test">Test</option>
+          <option value="stage">Stage</option>
+          <option value="production">Production</option>
+        </select>
+      </label>
+    </div>
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th scope="col">ID</th><th scope="col">Version</th><th scope="col">Environment</th><th scope="col">Result</th><th scope="col">Commit</th><th scope="col">By</th><th scope="col">Duration</th><th scope="col">Started</th></tr></thead>
+        <tbody id="deploy-rows"><tr><td colspan="8" class="muted">Loading deployments</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

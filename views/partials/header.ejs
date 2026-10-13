@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> | <%= app.name %></title>
+  <meta name="description" content="Shipyard: a demo application deployed to Amazon EKS through test, stage, and production.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="/" aria-label="<%= app.name %> home">
+        <svg class="brand-mark" viewBox="0 0 28 24" aria-hidden="true">
+          <rect x="4" y="0" width="16" height="7" fill="var(--teal)"/>
+          <rect x="8" y="8.5" width="16" height="7" fill="var(--signal)"/>
+          <rect x="2" y="17" width="20" height="7" fill="var(--rust)"/>
+        </svg>
+        <span><%= app.name %></span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav id="site-nav" class="site-nav" aria-label="Main">
+        <% nav.forEach(function (item) { %>
+          <a href="<%= item.href %>"<% if (item.href === currentPath) { %> aria-current="page"<% } %>><%= item.label %></a>
+        <% }) %>
+      </nav>
+      <span class="env-badge env-<%= app.env %>" title="Environment this instance is running in"><%= app.env %></span>
+    </div>
+  </header>
+  <main id="main">

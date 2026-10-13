@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+
+<section class="page-head">
+  <div class="wrap">
+    <h1>What the platform handles</h1>
+    <p class="lede">The pieces that take this application from a laptop to a production cluster.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <ul class="service-list">
+      <% services.forEach(function (s) { %>
+        <li id="<%= s.id %>">
+          <h2><%= s.title %></h2>
+          <p><%= s.description %></p>
+          <p class="tools"><% s.tools.forEach(function (t) { %><span class="tool"><%= t %></span><% }) %></p>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="wrap split">
+    <div>
+      <h2>See it running</h2>
+      <p>The dashboard reads live data from the API. The same endpoints are what the ingress routes under <code>/api</code>.</p>
+    </div>
+    <div class="actions">
+      <a class="btn btn-primary" href="/dashboard">Open the dashboard</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

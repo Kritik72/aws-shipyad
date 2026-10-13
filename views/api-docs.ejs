@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+
+<section class="page-head">
+  <div class="wrap">
+    <h1>API</h1>
+    <p class="lede">JSON endpoints served by this application. Run any GET request below to see the live response.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap api-grid">
+    <div class="table-scroll">
+      <table class="data endpoints">
+        <thead><tr><th scope="col">Method</th><th scope="col">Path</th><th scope="col">Returns</th><th scope="col"><span class="visually-hidden">Action</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/info</code></td><td>App name, version, environment, pod name</td><td><button class="btn btn-small" data-try="/api/info">Run</button></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/environments</code></td><td>Status of test, stage, production</td><td><button class="btn btn-small" data-try="/api/environments">Run</button></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/deployments?env=&amp;limit=</code></td><td>Recent deployments, optional filter</td><td><button class="btn btn-small" data-try="/api/deployments?env=production">Run</button></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/services</code></td><td>Platform services list</td><td><button class="btn btn-small" data-try="/api/services">Run</button></td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/contact</code></td><td>Send a message. Body: name, email, topic, message</td><td><a class="btn btn-small" href="/contact">Use form</a></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/health</code></td><td>Liveness check</td><td><button class="btn btn-small" data-try="/health">Run</button></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/ready</code></td><td>Readiness check, 503 while shutting down</td><td><button class="btn btn-small" data-try="/ready">Run</button></td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/metrics</code></td><td>Prometheus metrics (plain text)</td><td><button class="btn btn-small" data-try="/metrics">Run</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="console">
+      <div class="console-head">
+        <span id="console-request">Choose an endpoint to run</span>
+        <span id="console-status"></span>
+      </div>
+      <pre id="console-output" tabindex="0" aria-live="polite">Responses appear here.</pre>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

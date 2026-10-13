@@ -1,0 +1,69 @@
+<%- include('partials/header') %>
+
+<section class="page-head">
+  <div class="wrap">
+    <h1>Architecture</h1>
+    <p class="lede">How a request reaches this application, and how a new version gets there.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2>Request path</h2>
+    <div class="flow" role="list">
+      <div class="node" role="listitem"><strong>Browser</strong><span>Visits the site or calls /api</span></div>
+      <div class="node" role="listitem"><strong>AWS ALB</strong><span>Created by the ingress, terminates TLS</span></div>
+      <div class="node" role="listitem"><strong>Service</strong><span>ClusterIP in front of the pods</span></div>
+      <div class="node node-pods" role="listitem"><strong>Pods</strong><span>Node.js on port 3000, several replicas</span></div>
+    </div>
+
+    <h2>Delivery path</h2>
+    <div class="flow" role="list">
+      <div class="node" role="listitem"><strong>GitHub</strong><span>Push or merge triggers a build</span></div>
+      <div class="node" role="listitem"><strong>Jenkins</strong><span>Test, build image, deploy</span></div>
+      <div class="node" role="listitem"><strong>Amazon ECR</strong><span>Stores the tagged image</span></div>
+      <div class="node" role="listitem"><strong>Helm on EKS</strong><span>Upgrades the release per namespace</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="wrap">
+    <h2>Ingress routes</h2>
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th scope="col">Path</th><th scope="col">Goes to</th><th scope="col">Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>/</code></td><td>shipyard service, port 80</td><td>Website pages and static files</td></tr>
+          <tr><td><code>/api/*</code></td><td>shipyard service, port 80</td><td>JSON API</td></tr>
+          <tr><td><code>/health</code></td><td>shipyard service, port 80</td><td>ALB target health check and liveness probe</td></tr>
+          <tr><td><code>/ready</code></td><td>Pod only</td><td>Readiness probe</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2>Environments</h2>
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th scope="col">Environment</th><th scope="col">Namespace</th><th scope="col">Host</th><th scope="col">Replicas</th><th scope="col">Promotion</th></tr></thead>
+        <tbody>
+          <% environments.forEach(function (env) { %>
+            <tr>
+              <td><span class="dot dot-<%= env.name %>" aria-hidden="true"></span><%= env.label %></td>
+              <td><code><%= env.namespace %></code></td>
+              <td><%= env.host %></td>
+              <td><%= env.replicas.desired %></td>
+              <td><%= env.approval %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

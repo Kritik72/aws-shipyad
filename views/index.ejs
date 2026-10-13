@@ -1,0 +1,59 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1>Every release, from commit to production.</h1>
+      <p class="lede">Shipyard is the demo application for this DevOps project. It runs on Amazon EKS and moves through test, stage, and production with a Jenkins pipeline and Helm.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="/dashboard">Open the dashboard</a>
+        <a class="btn btn-quiet" href="/api-docs">Try the API</a>
+      </div>
+    </div>
+
+    <div class="yard" aria-label="Current version in each environment">
+      <% environments.forEach(function (env, i) { %>
+        <div class="container-box box-<%= env.name %>">
+          <div class="box-head">
+            <span class="box-env"><%= env.label %></span>
+            <span class="status status-<%= env.status %>"><%= env.status %></span>
+          </div>
+          <div class="box-version">v<%= env.version %></div>
+          <div class="box-meta"><%= env.replicas.ready %>/<%= env.replicas.desired %> pods ready<% if (env.current) { %>, this instance<% } %></div>
+        </div>
+      <% }) %>
+      <div class="yard-ground" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2>How a release moves</h2>
+    <p class="section-intro">Each change follows the same path. Nothing reaches production without passing every step before it.</p>
+    <ol class="pipeline">
+      <% stages.forEach(function (stage) { %>
+        <li>
+          <span class="pipeline-title"><%= stage.title %></span>
+          <span class="pipeline-detail"><%= stage.detail %></span>
+        </li>
+      <% }) %>
+    </ol>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="wrap split">
+    <div>
+      <h2>Which pod answered?</h2>
+      <p>This page was served by <code><%= app.hostname %></code>. Refresh behind the ingress and you may see a different pod name. That is the load balancer spreading traffic across replicas.</p>
+    </div>
+    <dl class="facts">
+      <div><dt>Environment</dt><dd><%= app.env %></dd></div>
+      <div><dt>Version</dt><dd><%= app.version %></dd></div>
+      <div><dt>Probes</dt><dd><a href="/health">/health</a>, <a href="/ready">/ready</a></dd></div>
+    </dl>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

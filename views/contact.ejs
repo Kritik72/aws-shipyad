@@ -1,0 +1,45 @@
+<%- include('partials/header') %>
+
+<section class="page-head">
+  <div class="wrap">
+    <h1>Contact</h1>
+    <p class="lede">Questions about the pipeline, the cluster, or something that looks broken. The form posts JSON to <code>/api/contact</code>.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap narrow">
+    <form id="contact-form" class="form" novalidate>
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" autocomplete="name" maxlength="100" required>
+        <p class="field-error" id="name-error"></p>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" maxlength="200" required>
+        <p class="field-error" id="email-error"></p>
+      </div>
+      <div class="field">
+        <label for="topic">Topic</label>
+        <select id="topic" name="topic">
+          <option value="general">General question</option>
+          <option value="pipeline">Jenkins pipeline</option>
+          <option value="kubernetes">Kubernetes and EKS</option>
+          <option value="bug">Something is broken</option>
+        </select>
+        <p class="field-error" id="topic-error"></p>
+      </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="6" minlength="10" maxlength="2000" required></textarea>
+        <p class="hint">10 to 2000 characters.</p>
+        <p class="field-error" id="message-error"></p>
+      </div>
+      <button class="btn btn-primary" type="submit" id="send">Send message</button>
+      <p class="form-status" id="form-status" role="status"></p>
+    </form>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
