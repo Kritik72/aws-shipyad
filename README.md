@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Shipyard
 
 A Node.js (Express + EJS) web application with a multi-page UI and JSON API, built as the
@@ -89,3 +90,7 @@ views/             EJS pages and partials
 public/            css, js, img
 tests/             Jest + Supertest
 ```
+=======
+# aws-shipyad
+This is my AWS project that uses NodeJs as my main code.
+>>>>>>> b33e5e886e9efeaa42aec778a33aac990eeabc2c
