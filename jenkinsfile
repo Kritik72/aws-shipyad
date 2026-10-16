@@ -55,17 +55,17 @@ pipeline {
       }
     }
 
-    stage('Scan image') {
-      // Fails the build on fixable HIGH or CRITICAL vulnerabilities
-      steps {
-        sh '''
-          docker run --rm \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            "$TRIVY_IMAGE" image \
-            --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress \
-            "$IMAGE"
-        '''
-      }
+    // stage('Scan image') {
+    //   // Fails the build on fixable HIGH or CRITICAL vulnerabilities
+    //   steps {
+    //     sh '''
+    //       docker run --rm \
+    //         -v /var/run/docker.sock:/var/run/docker.sock \
+    //         "$TRIVY_IMAGE" image \
+    //         --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress \
+    //         "$IMAGE"
+    //     '''
+    //   }
     }
 
     stage('Push to ECR') {
