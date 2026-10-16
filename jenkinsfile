@@ -1,0 +1,104 @@
+// Shipyard CI: test, build, scan, push to Amazon ECR
+// Use a Multibranch Pipeline job so `when { branch 'main' }` works.
+pipeline {
+  agent { label 'docker-agent' }        // label of your EC2 Jenkins agent
+
+  options {
+    timestamps()
+    timeout(time: 30, unit: 'MINUTES')
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(numToKeepStr: '20'))
+  }
+
+  environment {
+    AWS_REGION  = 'ap-south-1'
+    ECR_REPO    = 'shipyard'            // must match your ECR repository name
+    NODE_IMAGE  = 'node:22-alpine'
+    TRIVY_IMAGE = 'aquasec/trivy:0.57.1' // pin a version; pin by digest for stricter security
+  }
+
+  stages {
+    stage('Prepare') {
+      steps {
+        script {
+          // Account ID comes from the EC2 instance role, so nothing is hardcoded
+          env.AWS_ACCOUNT_ID = sh(script: 'aws sts get-caller-identity --query Account --output text', returnStdout: true).trim()
+          env.REGISTRY  = "${env.AWS_ACCOUNT_ID}.dkr.ecr.${env.AWS_REGION}.amazonaws.com"
+          env.IMAGE_TAG = "sha-" + sh(script: 'git rev-parse --short=7 HEAD', returnStdout: true).trim()
+          env.IMAGE     = "${env.REGISTRY}/${env.ECR_REPO}:${env.IMAGE_TAG}"
+          currentBuild.displayName = "#${env.BUILD_NUMBER} ${env.IMAGE_TAG}"
+        }
+        echo "Image will be: ${env.IMAGE}"
+      }
+    }
+
+    stage('Test') {
+      // Runs inside a Node container, so Node.js is not needed on the agent
+      steps {
+        sh '''
+          docker run --rm \
+            -u "$(id -u):$(id -g)" -e HOME=/tmp \
+            -v "$PWD":/app -w /app \
+            "$NODE_IMAGE" \
+            sh -c "npm ci && npm run test:ci && npm audit --omit=dev --audit-level=high"
+        '''
+      }
+    }
+
+    stage('Build image') {
+      steps {
+        sh '''
+          docker build --pull \
+            --build-arg APP_VERSION="$IMAGE_TAG" \
+            --label org.opencontainers.image.revision="$GIT_COMMIT" \
+            -t "$IMAGE" .
+        '''
+      }
+    }
+
+    stage('Scan image') {
+      // Fails the build on fixable HIGH or CRITICAL vulnerabilities
+      steps {
+        sh '''
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            "$TRIVY_IMAGE" image \
+            --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress \
+            "$IMAGE"
+        '''
+      }
+    }
+
+    stage('Push to ECR') {
+      when { branch 'main' }
+      steps {
+        sh '''
+          # Tags are immutable: if this commit was already pushed, skip instead of failing
+          if aws ecr describe-images --repository-name "$ECR_REPO" \
+               --image-ids imageTag="$IMAGE_TAG" --region "$AWS_REGION" >/dev/null 2>&1; then
+            echo "Image $IMAGE_TAG already exists in ECR. Skipping push."
+            exit 0
+          fi
+
+          aws ecr get-login-password --region "$AWS_REGION" \
+            | docker login --username AWS --password-stdin "$REGISTRY"
+
+          docker push "$IMAGE"
+        '''
+      }
+    }
+  }
+
+  post {
+    always {
+      // Remove the stored ECR login and the local image from the agent
+      sh '''
+        [ -n "$REGISTRY" ] && docker logout "$REGISTRY" || true
+        [ -n "$IMAGE" ] && docker rmi "$IMAGE" || true
+      '''
+    }
+    success {
+      echo "Done: ${env.IMAGE}"
+    }
+  }
+}
