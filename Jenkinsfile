@@ -66,7 +66,7 @@ pipeline {
     //         "$IMAGE"
     //     '''
     //   }
-    }
+    // }
 
     stage('Push to ECR') {
       when { branch 'main' }
