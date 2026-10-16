@@ -1,5 +1,4 @@
-// Shipyard CI: test, build, scan, push to Amazon ECR
-// Use a Multibranch Pipeline job so `when { branch 'main' }` works.
+
 pipeline {
   agent { label 'docker-agent' }        // label of your EC2 Jenkins agent
 
