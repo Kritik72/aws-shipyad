@@ -2,6 +2,9 @@
 pipeline {
   agent { label 'docker-agent' }        // label of your EC2 Jenkins agent
 
+parameters {
+    string(name: 'COMMIT', defaultValue: '', description: 'Git commit to build')
+  }
   options {
     timestamps()
     timeout(time: 30, unit: 'MINUTES')
@@ -69,7 +72,7 @@ pipeline {
     // }
 
     stage('Push to ECR') {
-      when { branch 'main' }
+      when { expression { params.COMMIT || env.GIT_BRANCH in ['origin/main', 'main'] } }
       steps {
         sh '''
           # Tags are immutable: if this commit was already pushed, skip instead of failing
